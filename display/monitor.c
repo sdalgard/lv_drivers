@@ -56,11 +56,11 @@ typedef struct {
 /**********************
  *  STATIC PROTOTYPES
  **********************/
-static void window_create(monitor_t * m);
+static void window_create(monitor_t * m, Uint32 flags);
 static void window_update(monitor_t * m);
 int quit_filter(void * userdata, SDL_Event * event);
 static void monitor_sdl_clean_up(void);
-static void monitor_sdl_init(void);
+static void monitor_sdl_init(Uint32 flags);
 static void sdl_event_handler(lv_timer_t * t);
 static void monitor_sdl_refr(lv_timer_t * t);
 
@@ -92,9 +92,9 @@ static volatile bool sdl_quit_qry = false;
 /**
  * Initialize the monitor
  */
-void monitor_init(void)
+void monitor_init(Uint32 flags)
 {
-    monitor_sdl_init();
+    monitor_sdl_init(flags);
     lv_timer_create(sdl_event_handler, 10, NULL);
 }
 
@@ -321,14 +321,14 @@ static void monitor_sdl_clean_up(void)
     SDL_Quit();
 }
 
-static void monitor_sdl_init(void)
+static void monitor_sdl_init(Uint32 flags)
 {
     /*Initialize the SDL*/
     SDL_Init(SDL_INIT_VIDEO);
 
     SDL_SetEventFilter(quit_filter, NULL);
 
-    window_create(&monitor);
+    window_create(&monitor, flags);
 #if MONITOR_DUAL
     window_create(&monitor2);
     int x, y;
@@ -341,11 +341,11 @@ static void monitor_sdl_init(void)
 }
 
 
-static void window_create(monitor_t * m)
+static void window_create(monitor_t * m, Uint32 flags)
 {
     m->window = SDL_CreateWindow("TFT Simulator",
                               SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-                              MONITOR_HOR_RES * MONITOR_ZOOM, MONITOR_VER_RES * MONITOR_ZOOM, 0);       /*last param. SDL_WINDOW_BORDERLESS to hide borders*/
+                              MONITOR_HOR_RES * MONITOR_ZOOM, MONITOR_VER_RES * MONITOR_ZOOM, flags);       /*last param. SDL_WINDOW_BORDERLESS to hide borders*/
 
     m->renderer = SDL_CreateRenderer(m->window, -1, SDL_RENDERER_SOFTWARE);
     m->texture = SDL_CreateTexture(m->renderer,
