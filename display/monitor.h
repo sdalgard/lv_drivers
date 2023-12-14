@@ -29,6 +29,8 @@ extern "C" {
 #include "lvgl/lvgl.h"
 #endif
 
+#include <SDL2/SDL_stdinc.h>
+  
 /*********************
  *      DEFINES
  *********************/
